@@ -36,7 +36,7 @@ const httpAddNewLaunch = (req, res) => {
 
   addNewLaunch(launch);
   // status 201 means the launch created successfully
-  // and you want to send the launch json in res to check it
+  // send the launch json in res to check it
   return res.status(201).json(launch);
 };
 
