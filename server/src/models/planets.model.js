@@ -1,6 +1,7 @@
 const { parse } = require('csv-parse');
 const { createReadStream } = require('fs');
 const path = require('path');
+const planetsCollection = require('./planets.mongo');
 
 const habitablePlanetsArray = [];
 
@@ -26,9 +27,19 @@ const loadPlanetsData = () => {
           columns: true,
         })
       )
-      .on('data', (planetObj) => {
+      .on('data', async (planetObj) => {
         if (isHabitable(planetObj)) {
-          habitablePlanetsArray.push(planetObj);
+          // now when the planet is checked to be habitable
+          // create its document in the mongodb
+          await planetsCollection.create({
+            // since this func will be invoked when the server start or restart
+            // it will create new planet instance every time
+            // to resolve this, mongo have something called upsert
+            // update + insert = upsert
+            // mongo will find the planet instance first
+            // only create new instance if it can't find it
+            keplerName: planetObj['kepler_name'],
+          });
         }
       })
       .on('error', (err) => reject(err))
@@ -42,8 +53,11 @@ const loadPlanetsData = () => {
   });
 };
 
-const getAllHabitalbePlanets = () => {
-  return habitablePlanetsArray;
+// now this func no need to get the data from local file
+// it need to fetch the data from the planets collection in the db
+const getAllHabitalbePlanets = async () => {
+  // fetch all the documents from the planet collection
+  return await planetsCollection.find({});
 };
 
 module.exports = {
