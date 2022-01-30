@@ -1,3 +1,20 @@
-const day = new Date('January 20 2022');
-const day1 = new Date('');
-console.log(day1);
+const wordsArray = [
+  'Thats',
+  'the',
+  'password',
+  'PASSWORD',
+  '123',
+  'cried',
+  'the',
+  'Special',
+  'Agent',
+  'So',
+  'I',
+  'fled',
+];
+
+const lowercaseWordsArray = wordsArray.map((word) => word.toLowerCase());
+
+lowercaseWordsArray.map((word) => {
+  word.inde;
+});
