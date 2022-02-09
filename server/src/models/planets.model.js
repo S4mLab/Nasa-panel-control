@@ -18,7 +18,7 @@ const updatePLanet = async (planetObj) => {
   // the 1st arg obj is the condition to find the doc
   // if it not found, then create a new doc with 2nd arg obj
   try {
-    return await planetModel.updateOne(
+    await planetModel.updateOne(
       {
         keplerName: planetObj.kepler_name,
       },
@@ -56,7 +56,6 @@ const loadPlanetsData = () => {
       .on('end', async () => {
         const planetsNum = (await getAllHabitalbePlanets()).length;
         console.log(`${planetsNum} habitable planets found...`);
-        console.log('Done');
         resolve();
       });
   });

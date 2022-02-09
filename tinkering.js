@@ -1,20 +1,12 @@
-const wordsArray = [
-  'Thats',
-  'the',
-  'password',
-  'PASSWORD',
-  '123',
-  'cried',
-  'the',
-  'Special',
-  'Agent',
-  'So',
-  'I',
-  'fled',
-];
+const { getAllHabitalbePlanets } = require('./server/src/models/planets.model');
 
-const lowercaseWordsArray = wordsArray.map((word) => word.toLowerCase());
+const getData = async () => {
+  try {
+    const data = await getAllHabitalbePlanets();
+    console.log(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-lowercaseWordsArray.map((word) => {
-  word.inde;
-});
+getData();
