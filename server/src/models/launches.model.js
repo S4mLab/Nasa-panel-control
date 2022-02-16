@@ -1,26 +1,62 @@
-const launches = new Map();
+const launchModel = require('./launches.mongo');
+const planetModel = require('./planets.mongo');
 
-// can we use objects instead of map
-const launch = {
-  flightNumber: 1,
-  launchDate: new Date('January 28 2022'),
-  mission: 'Kepler Exploration X',
-  rocket: 'Falcon 9',
-  destination: 'Kepler-442 b',
-  customer: ['Terminal', 'SpaceX'],
-  upcoming: true,
-  success: true,
+// launches.set(launch.flightNumber, launch);
+
+// find and get all launch docs
+// exclude the id and version props of the doc
+const getAllLaunches = async () => {
+  return await launchModel.find(
+    {},
+    {
+      _id: 0,
+      __v: 0,
+    }
+  );
 };
 
-launches.set(launch.flightNumber, launch);
+const DEFAULT_FLIGHT_NUMBER = 0;
 
-const getAllLaunches = () => {
-  return Array.from(launches.values());
+// find the lastest flight number in the launches collection
+const getLastestFlightNumber = async () => {
+  const lastestFlightNum = await launchModel.findOne().sort('-flightNumber');
+  if (!lastestFlightNum) {
+    return DEFAULT_FLIGHT_NUMBER;
+  }
+  return lastestFlightNum;
 };
 
-let lastestFlightNumber = 1;
+// this func will update the launch data
+// if the launch exist, update it
+// otherwise, create a new launch
+const updateLaunch = async (launchObj) => {
+  // check the destination with planets collection
+  const planetObj = await planetModel.findOne({
+    keplerName: launchObj.destination,
+  });
 
-// create new launch
+  // if there is no matched planet
+  // throw an err
+  try {
+    if (!planetObj) {
+      throw new Error('No matching planet found!');
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  await launchModel.updateOne(
+    {
+      flightNumber: launchObj.flightNumber,
+    },
+    launchObj,
+    {
+      upsert: true,
+    }
+  );
+};
+
+// with the updateLaunch, do we need this func anymore?
 const addNewLaunch = (launch) => {
   lastestFlightNumber++;
   launches.set(
@@ -60,4 +96,5 @@ module.exports = {
   addNewLaunch,
   findLaunchById,
   abortLaunchById,
+  updateLaunch,
 };

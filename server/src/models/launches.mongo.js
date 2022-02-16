@@ -35,7 +35,7 @@ const launchSchema = mongoose.Schema({
   },
 });
 
-// the 1st string input is always the the singular name of a document
-// mongo will add plural to it as the name of the collection => launches
-// connect launchSchema with launches collection
+// the 1st string input is always the the singular name of the collection
+// this creates Launch model for launches collection
+// Launch model will create and read launch document
 module.exports = mongoose.model('Launch', launchSchema);

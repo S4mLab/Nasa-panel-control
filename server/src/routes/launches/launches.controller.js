@@ -3,12 +3,14 @@ const {
   addNewLaunch,
   findLaunchById,
   abortLaunchById,
+  updateLaunch,
 } = require('../../models/launches.model');
 
-const httpGetAllLaunches = (req, res) => {
+const httpGetAllLaunches = async (req, res) => {
   // what you want to achieve
   // we want to get an array of launch objects
-  return res.status(200).json(getAllLaunches());
+  const launchObjsList = await getAllLaunches();
+  return res.status(200).json(launchObjsList);
 };
 
 const httpAddNewLaunch = (req, res) => {
@@ -34,7 +36,7 @@ const httpAddNewLaunch = (req, res) => {
     });
   }
 
-  addNewLaunch(launch);
+  updateLaunch(launch);
   // status 201 means the launch created successfully
   // send the launch json in res to check it
   return res.status(201).json(launch);

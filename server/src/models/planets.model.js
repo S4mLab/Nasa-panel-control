@@ -68,7 +68,15 @@ const getAllHabitalbePlanets = async () => {
   // find all the planets docs
   // with .find(), we pass the doc obj you want to find as an arg
   // to get all the doc in a collection, just pass in empty {}
-  return await planetModel.find({});
+  return await planetModel.find(
+    {},
+    {
+      // to exclude the properties of the documents that you receive
+      // to exclude id and version properties...
+      _id: 0,
+      __v: 0,
+    }
+  );
 };
 
 module.exports = {
