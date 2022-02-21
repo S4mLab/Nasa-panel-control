@@ -1,8 +1,6 @@
 const launchModel = require('./launches.mongo');
 const planetModel = require('./planets.mongo');
 
-// launches.set(launch.flightNumber, launch);
-
 // find and get all launch docs
 // exclude the id and version props of the doc
 const getAllLaunches = async () => {
@@ -17,26 +15,14 @@ const getAllLaunches = async () => {
 
 const DEFAULT_FLIGHT_NUMBER = 0;
 
-// find the lastest flight number in the launches collection
-const getLastestFlightNumber = async () => {
-  const lastestFlightNum = await launchModel.findOne().sort('-flightNumber');
-  if (!lastestFlightNum) {
-    return DEFAULT_FLIGHT_NUMBER;
-  }
-  return lastestFlightNum;
-};
-
-// this func will update the launch data
-// if the launch exist, update it
-// otherwise, create a new launch
+// updateLaunch is for when we assume the launch has all the info
+// if the launch exist, update it, otherwise, create a new launch
 const updateLaunch = async (launchObj) => {
   // check the destination with planets collection
   const planetObj = await planetModel.findOne({
     keplerName: launchObj.destination,
   });
 
-  // if there is no matched planet
-  // throw an err
   try {
     if (!planetObj) {
       throw new Error('No matching planet found!');
@@ -54,6 +40,41 @@ const updateLaunch = async (launchObj) => {
       upsert: true,
     }
   );
+};
+
+// find the lastest flight number in the launches collection
+const getLastestFlightNumber = async () => {
+  // sort method using sorted ascending as default, to sort descending, using '-' sign before the properties name
+  const lastestFlightNum = await launchModel.findOne().sort('-flightNumber');
+  console.log(lastestFlightNum);
+  if (!lastestFlightNum) {
+    return DEFAULT_FLIGHT_NUMBER;
+  }
+  return lastestFlightNum;
+};
+
+// this func will get the user input, generate some other info and combine them together
+const scheduleNewLaunch = async (userLaunchInputObj) => {
+  const newFlightNum = getLastestFlightNumber() + 1;
+
+  // generate additional info for the new launch that user just create
+  // these info is defaulted and only need to created internally
+  const additionalLaunchInfoObj = {
+    flightNumber: newFlightNum,
+    customer: ['Terminal', 'SpaceX'],
+    upcoming: true,
+    success: true,
+  };
+
+  // combine 2 object together
+  // using spread operator to merge 2 objs into one
+  const completedLaunchObj = {
+    ...userLaunchInputObj,
+    ...additionalLaunchInfoObj,
+  };
+
+  // after merge 2 launch obj together, create the launch in the db
+  updateLaunch(completedLaunchObj);
 };
 
 // with the updateLaunch, do we need this func anymore?
@@ -93,7 +114,7 @@ const abortLaunchById = (launchIdNum) => {
 
 module.exports = {
   getAllLaunches,
-  addNewLaunch,
+  scheduleNewLaunch,
   findLaunchById,
   abortLaunchById,
   updateLaunch,
