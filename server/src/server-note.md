@@ -76,3 +76,9 @@ to create new error
 ### how to increment the launch
 
 find the lastest launch from the launches collection
+
+### now that you finish the scheduling launch, wat to do?
+
+the schedule launch in the launch model file, the layer inteact with data in db
+
+need to import it to controller so that it can be invoked

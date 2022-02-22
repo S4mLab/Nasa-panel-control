@@ -1,9 +1,8 @@
 const {
   getAllLaunches,
-  addNewLaunch,
+  scheduleNewLaunch,
   findLaunchById,
   abortLaunchById,
-  updateLaunch,
 } = require('../../models/launches.model');
 
 const httpGetAllLaunches = async (req, res) => {
@@ -36,7 +35,7 @@ const httpAddNewLaunch = (req, res) => {
     });
   }
 
-  updateLaunch(launch);
+  scheduleNewLaunch(launch);
   // status 201 means the launch created successfully
   // send the launch json in res to check it
   return res.status(201).json(launch);

@@ -45,8 +45,9 @@ const updateLaunch = async (launchObj) => {
 // find the lastest flight number in the launches collection
 const getLastestFlightNumber = async () => {
   // sort method using sorted ascending as default, to sort descending, using '-' sign before the properties name
-  const lastestFlightNum = await launchModel.findOne().sort('-flightNumber');
-  console.log(lastestFlightNum);
+  const lastestLaunchObj = await launchModel.findOne().sort('-flightNumber');
+  const lastestFlightNum = lastestLaunchObj['flightNumber'];
+  // if there is no launch yet, create the first flightNum
   if (!lastestFlightNum) {
     return DEFAULT_FLIGHT_NUMBER;
   }
@@ -55,7 +56,7 @@ const getLastestFlightNumber = async () => {
 
 // this func will get the user input, generate some other info and combine them together
 const scheduleNewLaunch = async (userLaunchInputObj) => {
-  const newFlightNum = getLastestFlightNumber() + 1;
+  const newFlightNum = (await getLastestFlightNumber()) + 1;
 
   // generate additional info for the new launch that user just create
   // these info is defaulted and only need to created internally
@@ -75,20 +76,6 @@ const scheduleNewLaunch = async (userLaunchInputObj) => {
 
   // after merge 2 launch obj together, create the launch in the db
   updateLaunch(completedLaunchObj);
-};
-
-// with the updateLaunch, do we need this func anymore?
-const addNewLaunch = (launch) => {
-  lastestFlightNumber++;
-  launches.set(
-    lastestFlightNumber,
-    Object.assign(launch, {
-      flightNumber: lastestFlightNumber,
-      customer: ['Terminal', 'SpaceX'],
-      upcoming: true,
-      success: true,
-    })
-  );
 };
 
 const findLaunchById = (launchIdNum) => {
@@ -117,5 +104,4 @@ module.exports = {
   scheduleNewLaunch,
   findLaunchById,
   abortLaunchById,
-  updateLaunch,
 };
