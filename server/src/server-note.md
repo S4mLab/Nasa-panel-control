@@ -82,3 +82,9 @@ find the lastest launch from the launches collection
 the schedule launch in the launch model file, the layer inteact with data in db
 
 need to import it to controller so that it can be invoked
+
+### different between find() and findOne() in mongodb?
+
+`findOne():` if query is matches, first document is return, otherwise it returns null.
+
+`find():` regardless how many documents it finds, a cursor is returned, never null

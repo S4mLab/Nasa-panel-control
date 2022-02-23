@@ -2,7 +2,7 @@ const {
   getAllLaunches,
   scheduleNewLaunch,
   findLaunchById,
-  abortLaunchById,
+  abortLaunchByFlightNum,
 } = require('../../models/launches.model');
 
 const httpGetAllLaunches = async (req, res) => {
@@ -53,7 +53,7 @@ const httpAbortLaunch = (req, res) => {
   }
 
   // if launch exist
-  const theAbortedLaunch = abortLaunchById(launchIdNum);
+  const theAbortedLaunch = abortLaunchByFlightNum(launchIdNum);
   return res.status(200).json(theAbortedLaunch);
 };
 

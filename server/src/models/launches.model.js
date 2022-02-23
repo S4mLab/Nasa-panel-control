@@ -31,7 +31,9 @@ const updateLaunch = async (launchObj) => {
     console.error(err);
   }
 
-  await launchModel.updateOne(
+  // very similar to updateOne
+  // but findONeAndUpdate only return the props that we set in the update
+  await launchModel.findOneAndUpdate(
     {
       flightNumber: launchObj.flightNumber,
     },
@@ -78,9 +80,25 @@ const scheduleNewLaunch = async (userLaunchInputObj) => {
   updateLaunch(completedLaunchObj);
 };
 
+const abortLaunchByFlightNum = async (flightNum) => {
+  await launchModel.findOneAndUpdate(
+    {
+      flightNumber: flightNum,
+    },
+    {
+      upcoming: false,
+      success: false,
+    }
+  );
+};
+
 const findLaunchById = (launchIdNum) => {
   // if cannot find the launch
-  if (!launches.has(launchIdNum)) {
+  if (
+    !launchModel.findOne({
+      flightNumber: launchIdNum,
+    })
+  ) {
     return false;
   }
   // if yes
@@ -104,4 +122,5 @@ module.exports = {
   scheduleNewLaunch,
   findLaunchById,
   abortLaunchById,
+  abortLaunchByFlightNum,
 };
