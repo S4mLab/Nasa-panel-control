@@ -88,3 +88,8 @@ need to import it to controller so that it can be invoked
 `findOne():` if query is matches, first document is return, otherwise it returns null.
 
 `find():` regardless how many documents it finds, a cursor is returned, never null
+
+### how we route for different api versions
+
+instead of manually create different routes for each version
+we can create a router and and all the trafiic of one version will go through it

@@ -1,5 +1,42 @@
+const axios = require('axios').default;
+
 const launchModel = require('./launches.mongo');
 const planetModel = require('./planets.mongo');
+
+const aLaunch = {
+  flightNumber: 100, // flight_number
+  mission: 'Kepler', // name
+  rocket: 'IS1', // rocket.name
+  launchDate: new Date('December 26, 2030'), // date_local
+  destination: 'Kepler', // not applicable
+  customer: [], // payload.customers for each payload
+  upcoming: true,
+  success: true,
+};
+
+const SPACEX_LAUNCH_URL = 'https://api.spacexdata.com/v4/launches/query';
+
+const loadSpaceXLaunches = async () => {
+  const rawLaunchesDataList = await axios.post(SPACEX_LAUNCH_URL, {
+    query: {},
+    option: {
+      populate: [
+        {
+          path: 'rockets',
+          select: {
+            name: 1,
+          },
+        },
+        {
+          path: 'payloads',
+          select: {
+            customers: 1,
+          },
+        },
+      ],
+    },
+  });
+};
 
 // find and get all launch docs
 // exclude the id and version props of the doc
@@ -118,6 +155,7 @@ const abortLaunchById = (launchIdNum) => {
 };
 
 module.exports = {
+  loadSpaceXLaunches,
   getAllLaunches,
   scheduleNewLaunch,
   findLaunchById,
